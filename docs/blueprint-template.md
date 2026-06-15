@@ -22,6 +22,7 @@
 ### 3.1 Logging & Tracing
 - [EVIDENCE_CORRELATION_ID_SCREENSHOT]: [docs/evidence/logging-correlation-pii.png](evidence/logging-correlation-pii.png)
 - [EVIDENCE_PII_REDACTION_SCREENSHOT]: [docs/evidence/logging-correlation-pii.png](evidence/logging-correlation-pii.png)
+- [EVIDENCE_TRACE_LIST_SCREENSHOT]: [docs/evidence/langfuse-trace-list.png](evidence/langfuse-trace-list.png)
 - [EVIDENCE_TRACE_WATERFALL_SCREENSHOT]: [docs/evidence/trace-waterfall.png](evidence/trace-waterfall.png)
 - [TRACE_WATERFALL_EXPLANATION]: Trace incident [`f7f163eb01ade01e3afeaa3dfb4fe7db`](https://jp.cloud.langfuse.com/project/cmqevsbl7002cad0e84tzuud4/traces/f7f163eb01ade01e3afeaa3dfb4fe7db) có span cha `run` mất 5.652 giây. Span con `rag.retrieve` mất 5.501 giây (97.3% tổng latency), trong khi `llm.generate` chỉ mất 0.151 giây. Waterfall chứng minh nút thắt nằm ở retrieval sau khi bật incident `rag_slow`, không phải ở LLM.
 
