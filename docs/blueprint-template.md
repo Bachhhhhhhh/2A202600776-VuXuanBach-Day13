@@ -34,9 +34,9 @@
 |---|---:|---|---:|
 | Latency P95 | < 3000ms | 28d | 152ms |
 | Error Rate | < 2% | 28d | 0.00% |
-| Cost Budget | < $2.5/day | 1d | $0.0214 |
+| Cost Budget | < $2.5/day | 1d | $0.144876 |
 
-Dashboard dùng baseline sau remediation gồm 10 requests, quality average 0.88, 340 input tokens và 1,356 output tokens. Khi inject `rag_slow`, P95 đạt 5,653ms và vượt cả SLO 3,000ms lẫn alert threshold 5,000ms.
+Dashboard evidence tổng hợp 71 traces trên Langfuse với error rate 0.00% (71 success, 0 error) và total observed cost $0.144876. Panel latency, token và quality dùng batch baseline sau remediation gồm 10 requests: P50 = 151ms, P95 = 152ms, P99 = 152ms, quality average 0.88, 340 input tokens và 1,356 output tokens; riêng batch này có estimated cost $0.0214. Khi inject `rag_slow`, P95 đạt 5,653ms và vượt cả SLO 3,000ms lẫn alert threshold 5,000ms.
 
 ### 3.3 Alerts & Runbook
 - [ALERT_RULES_SCREENSHOT]: [docs/evidence/alert-rules.png](evidence/alert-rules.png)
