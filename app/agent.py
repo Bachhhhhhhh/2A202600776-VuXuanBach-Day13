@@ -28,9 +28,9 @@ class LabAgent:
     @observe()
     def run(self, user_id: str, feature: str, session_id: str, message: str) -> AgentResult:
         started = time.perf_counter()
-        docs = retrieve(message)
+        docs = self._retrieve(message)
         prompt = f"Feature={feature}\nDocs={docs}\nQuestion={message}"
-        response = self.llm.generate(prompt)
+        response = self._generate(prompt)
         quality_score = self._heuristic_quality(message, response.text, docs)
         latency_ms = int((time.perf_counter() - started) * 1000)
         cost_usd = self._estimate_cost(response.usage.input_tokens, response.usage.output_tokens)
@@ -39,10 +39,10 @@ class LabAgent:
             user_id=hash_user_id(user_id),
             session_id=session_id,
             tags=["lab", feature, self.model],
+            metadata={"feature": feature, "model": self.model},
         )
-        langfuse_context.update_current_observation(
+        langfuse_context.update_current_span(
             metadata={"doc_count": len(docs), "query_preview": summarize_text(message)},
-            usage_details={"input": response.usage.input_tokens, "output": response.usage.output_tokens},
         )
 
         metrics.record_request(
@@ -61,6 +61,31 @@ class LabAgent:
             cost_usd=cost_usd,
             quality_score=quality_score,
         )
+
+    @observe(name="rag.retrieve")
+    def _retrieve(self, message: str) -> list[str]:
+        docs = retrieve(message)
+        langfuse_context.update_current_span(
+            input={"query_preview": summarize_text(message)},
+            output={"doc_count": len(docs)},
+            metadata={"component": "mock_rag"},
+        )
+        return docs
+
+    @observe(name="llm.generate", as_type="generation")
+    def _generate(self, prompt: str):
+        response = self.llm.generate(prompt)
+        langfuse_context.update_current_generation(
+            model=self.model,
+            input={"prompt_preview": summarize_text(prompt)},
+            output={"answer_preview": summarize_text(response.text)},
+            usage_details={
+                "input": response.usage.input_tokens,
+                "output": response.usage.output_tokens,
+            },
+            metadata={"component": "fake_llm"},
+        )
+        return response
 
     def _estimate_cost(self, tokens_in: int, tokens_out: int) -> float:
         input_cost = (tokens_in / 1_000_000) * 3
